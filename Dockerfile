@@ -23,6 +23,7 @@ RUN \
   apt-get install -y --no-install-recommends \
     imagemagick \
     ghostscript \
+    git \
     libldap2 \
     libmagic1t64 \
     libsasl2-2 \
@@ -32,18 +33,11 @@ RUN \
     sqlite3 \
     xdg-utils && \
   echo "**** install calibre-web ****" && \
-  if [ -z ${CALIBREWEB_RELEASE+x} ]; then \
-    CALIBREWEB_RELEASE=$(curl -sX GET "https://api.github.com/repos/janeczku/calibre-web/releases/latest" \
-    | awk '/tag_name/{print $4;exit}' FS='[""]'); \
-  fi && \
-  curl -o \
-    /tmp/calibre-web.tar.gz -L \
-    https://github.com/janeczku/calibre-web/archive/${CALIBREWEB_RELEASE}.tar.gz && \
-  mkdir -p \
+  git clone \
+    --depth 1 \
+    --branch feature/goodreads \
+    https://github.com/claireratigan/calibre-web \
     /app/calibre-web && \
-  tar xf \
-    /tmp/calibre-web.tar.gz -C \
-    /app/calibre-web --strip-components=1 && \
   cd /app/calibre-web && \
   python3 -m venv /lsiopy && \
   pip install -U --no-cache-dir \
